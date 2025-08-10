@@ -35,15 +35,10 @@ namespace BibliotecaApp
 
         private void RefrescarTodo()
         {
-            // Usuarios
             dgvUsuarios.DataSource = null;
             dgvUsuarios.DataSource = biblioteca.Usuarios.Select(u => new { u.Id, u.Nombre, u.Email }).ToList();
-
-            // Libros
             dgvLibros.DataSource = null;
             dgvLibros.DataSource = biblioteca.Libros.Select(l => new { l.Id, l.Titulo, l.Autor, Disponible = l.Disponible ? "Sí" : "No" }).ToList();
-
-            // Prestamos
             dgvPrestamos.DataSource = null;
             dgvPrestamos.DataSource = biblioteca.Prestamos.Select(p => new
             {
@@ -53,8 +48,6 @@ namespace BibliotecaApp
                 p.FechaPrestamo,
                 FechaDevolucion = p.FechaDevolucion?.ToString() ?? ""
             }).ToList();
-
-            // Comboboxes
             cmbUsuarios.DataSource = null;
             cmbUsuarios.DisplayMember = "Nombre";
             cmbUsuarios.ValueMember = "Id";
@@ -65,8 +58,6 @@ namespace BibliotecaApp
             cmbLibros.ValueMember = "Id";
             cmbLibros.DataSource = biblioteca.Libros.Where(x => x.Disponible).ToList();
         }
-
-        // --- Usuarios: agregar
         private void btnAgregarUsuario_Click(object sender, EventArgs e)
         {
             string nombre = txtNombreUsuario.Text.Trim();
@@ -103,8 +94,6 @@ namespace BibliotecaApp
                 }
             }
         }
-
-        // --- Libros: agregar
         private void btnAgregarLibro_Click(object sender, EventArgs e)
         {
             string titulo = txtTituloLibro.Text.Trim();
@@ -135,8 +124,6 @@ namespace BibliotecaApp
                 }
             }
         }
-
-        // --- Prestamos: prestar
         private void btnPrestar_Click(object sender, EventArgs e)
         {
             if (cmbUsuarios.SelectedItem == null || cmbLibros.SelectedItem == null)
@@ -157,15 +144,12 @@ namespace BibliotecaApp
                 FechaDevolucion = null
             };
             biblioteca.Prestamos.Add(p);
-            // marcar libro no disponible
             var lib = biblioteca.Libros.FirstOrDefault(x => x.Id == libro.Id);
             if (lib != null) lib.Disponible = false;
 
             biblioteca.GuardarDatos();
             RefrescarTodo();
         }
-
-        // --- Prestamos: devolver
         private void btnDevolver_Click(object sender, EventArgs e)
         {
             if (dgvPrestamos.CurrentRow == null) { MessageBox.Show("Selecciona un préstamo."); return; }
